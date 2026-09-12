@@ -63,6 +63,8 @@ export function enforceDatasetContract(
   candles: readonly Candle[],
   contract: ResearchDatasetContract,
 ): void {
+  if (!Number.isFinite(contract.timeframeMs) || contract.timeframeMs <= 0) throw new Error('INVALID_TIMEFRAME_MS');
+  if (!Number.isFinite(contract.maxCandleOpenTime) || !Number.isFinite(contract.maxInformationTime)) throw new Error('INVALID_DATASET_BOUNDARY');
   const audit = auditCandles(candles);
   if (audit.duplicateTimestamps !== 0 || audit.nonIncreasingTimestamps !== 0) {
     throw new Error('INVALID_TIMESTAMP_ORDER');
@@ -72,5 +74,6 @@ export function enforceDatasetContract(
   }
   for (const candle of candles) {
     if (candle.time > contract.maxCandleOpenTime) throw new Error('LOCKBOX_BOUNDARY_VIOLATION');
+    if (candle.time + contract.timeframeMs > contract.maxInformationTime) throw new Error('INFORMATION_BOUNDARY_VIOLATION');
   }
 }

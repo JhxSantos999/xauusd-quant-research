@@ -29,6 +29,19 @@ export interface NestedGeometryV1 {
   };
 }
 
+export function assertNonOverlappingOosGeometryV1(geometry: NestedGeometryV1): void {
+  if (!Number.isFinite(geometry.domainEnd) || !Number.isFinite(geometry.embargoMs) || geometry.embargoMs < 0) throw new Error('INVALID_GEOMETRY_BOUNDARY');
+  const blocks = [geometry.outer, geometry.inner] as const;
+  for (const block of blocks) {
+    if (![block.calibrationMs, block.oosMs, block.stepMs].every((value) => Number.isFinite(value) && value > 0)) throw new Error('INVALID_GEOMETRY_DURATION');
+    if (!Number.isInteger(block.count) || block.count <= 0) throw new Error('INVALID_GEOMETRY_COUNT');
+  }
+  if (!Number.isFinite(geometry.outer.trainDevMs) || geometry.outer.trainDevMs <= 0) throw new Error('INVALID_OUTER_DEVELOPMENT_DURATION');
+  if (!Number.isFinite(geometry.inner.trainMs) || geometry.inner.trainMs <= 0) throw new Error('INVALID_INNER_TRAIN_DURATION');
+  if (geometry.outer.stepMs < geometry.outer.oosMs) throw new Error('OUTER_OOS_OVERLAP_NOT_ALLOWED');
+  if (geometry.inner.stepMs < geometry.inner.oosMs) throw new Error('INNER_OOS_OVERLAP_NOT_ALLOWED');
+}
+
 export const FROZEN_NESTED_GEOMETRY_V1: NestedGeometryV1 = {
   domainEnd: DEV_INFORMATION_END_V1,
   embargoMs: EMBARGO_MS_V1,
@@ -47,6 +60,8 @@ export const FROZEN_NESTED_GEOMETRY_V1: NestedGeometryV1 = {
     count: 3,
   },
 };
+
+assertNonOverlappingOosGeometryV1(FROZEN_NESTED_GEOMETRY_V1);
 
 export const PREREGISTRATION_IDENTITIES_V1 = {
   selection: { path: 'quant-core/selection/label_selection_v1.spec.json', bytes: 2068, sha256: 'a5d19b25723d2576b53c6aac20ca4d8c34df3446af9bed0e418026fea405a966' },
