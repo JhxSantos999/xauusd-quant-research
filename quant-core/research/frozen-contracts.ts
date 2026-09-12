@@ -9,6 +9,7 @@ export const FROZEN_H_GRID_V1 = [3, 6, 12, 24] as const;
 export const FROZEN_TAU_GRID_V1 = [0, 0.0002, 0.0004, 0.0008] as const;
 export const EMBARGO_MS_V1 = DAY_MS;
 export const DEV_INFORMATION_END_V1 = Date.parse('2026-09-09T05:30:00Z');
+export const ACTIVE_PREREGISTRATION_VERSION_V1R1 = 'V1R1' as const;
 
 export interface NestedGeometryV1 {
   readonly domainEnd: number;
@@ -63,12 +64,22 @@ export const FROZEN_NESTED_GEOMETRY_V1: NestedGeometryV1 = {
 
 assertNonOverlappingOosGeometryV1(FROZEN_NESTED_GEOMETRY_V1);
 
-export const PREREGISTRATION_IDENTITIES_V1 = {
+export const LEGACY_PREREGISTRATION_IDENTITIES_V1 = {
   selection: { path: 'quant-core/selection/label_selection_v1.spec.json', bytes: 2068, sha256: 'a5d19b25723d2576b53c6aac20ca4d8c34df3446af9bed0e418026fea405a966' },
   geometry: { path: 'quant-core/research/walkforward_geometry_v1.spec.json', bytes: 1203, sha256: 'da97bfb9be52a5ac68f94fc7c19b897502eeeef737db864a745fcdcec95734cc' },
   nested: { path: 'quant-core/research/nested_validation_v1.spec.json', bytes: 1068, sha256: 'ac844eb750d2f67d12bcf70cb276fbab411c4e6395eac3b53415feb7ecbbf836' },
   manifest: { path: 'quant-core/research/research_preregistration_manifest.json', bytes: 851, sha256: '791d89013224ae0e3a9296058e53f54b732e20bffdf5fe746c81e283f06a70e0' },
 } as const;
+
+export const PREREGISTRATION_IDENTITIES_V1R1 = {
+  selection: { path: 'quant-core/selection/label_selection_v1r1.spec.json', bytes: 2015, sha256: '07cbc1cbbf774321368269bd4d8d58325c0b2adb78a8ba8cbb9bd05cc658e83f' },
+  geometry: { path: 'quant-core/research/walkforward_geometry_v1r1.spec.json', bytes: 1680, sha256: '4371d1e60888aafcd77be2dca2ca33d70e8fc4e985433bff4a0d57155911b7b2' },
+  nested: { path: 'quant-core/research/nested_validation_v1r1.spec.json', bytes: 1630, sha256: '13e55e8f18d26005322ec079a03996dae02ec46d7e0d5dd8fc4a8e94418c07d1' },
+  manifest: { path: 'quant-core/research/research_preregistration_manifest_v1r1.json', bytes: 2196, sha256: '1cacf7759512560ad6068980e0ea44d19aa9018a3aa1c34ba08cf22d0fe399a0' },
+} as const;
+
+// Compatibility alias: the mathematical engine remains semantic V1, while the active canonical preregistration identity is V1R1.
+export const PREREGISTRATION_IDENTITIES_V1 = PREREGISTRATION_IDENTITIES_V1R1;
 
 export const IMPLEMENTATION_FREEZE_IDENTITIES_V1 = {
   logreg: { path: 'research-reference/logreg_v1.implementation.json', bytes: 559, sha256: 'c6417700264c710e92a7dd1a888907b8aefafcd87f147805daea058cbe9b4483' },
