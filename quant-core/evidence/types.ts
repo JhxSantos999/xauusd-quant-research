@@ -25,6 +25,17 @@ export interface InnerFoldEvidenceV1 {
   readonly calibratedBrierSkill: number;
   readonly calibratedLogLossSkill: number;
   readonly oosPredictions: readonly OosPredictionV1[];
+  readonly rawMetrics?: ProbabilityMetricsV1;
+  readonly calibratedMetrics?: ProbabilityMetricsV1;
+  readonly baselineMetrics?: ProbabilityMetricsV1;
+  readonly baselineProbability?: number;
+  readonly retentionNumerator?: number;
+  readonly retentionDenominator?: number;
+  readonly isolation?: {
+    readonly train: { readonly beforeIsolation: number; readonly afterPurge: number; readonly afterEmbargo: number };
+    readonly calibration: { readonly beforeIsolation: number; readonly afterPurge: number; readonly afterEmbargo: number };
+  };
+  readonly integrityReasons?: readonly string[];
 }
 
 export interface InnerCandidateEvidenceV1 {
