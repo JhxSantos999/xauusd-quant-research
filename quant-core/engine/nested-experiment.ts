@@ -198,8 +198,8 @@ export function runNestedExperimentV1(candles: readonly Candle[], geometry: Nest
           attemptedInnerEvaluations++;
           const evaluated = evaluateInnerFold(labels, featuresByDecisionTime, inner.innerFoldId, inner.train, inner.calibration, inner.oos, geometry.embargoMs);
           foldEvidence.push(evaluated.evidence);
-          if (evaluated.valid) completedInnerEvaluations++;
-          else { invalidInnerEvaluations++; allValid = false; }
+          completedInnerEvaluations++;
+          if (!evaluated.valid) { invalidInnerEvaluations++; allValid = false; }
         }
         candidates.push(aggregateCandidate(h, tau, foldEvidence, allValid));
       }
@@ -257,7 +257,8 @@ export function runNestedExperimentV1(candles: readonly Candle[], geometry: Nest
 
   const expectedAttempts = geometry.outer.count * FROZEN_H_GRID_V1.length * FROZEN_TAU_GRID_V1.length * geometry.inner.count;
   if (attemptedInnerEvaluations !== expectedAttempts) throw new Error(`INNER_ATTEMPT_COUNT_MISMATCH:${attemptedInnerEvaluations}:${expectedAttempts}`);
-  if (attemptedInnerEvaluations !== completedInnerEvaluations + invalidInnerEvaluations) throw new Error('INNER_COUNTER_ACCOUNTING_MISMATCH');
+  if (completedInnerEvaluations !== expectedAttempts) throw new Error(`INNER_COMPLETED_COUNT_MISMATCH:${completedInnerEvaluations}:${expectedAttempts}`);
+  if (invalidInnerEvaluations < 0 || invalidInnerEvaluations > completedInnerEvaluations) throw new Error('INNER_INVALID_COUNTER_OUT_OF_RANGE');
   const nestedValidation = validateNestedProcedureV1(nestedInput);
   return { attemptedInnerEvaluations, completedInnerEvaluations, invalidInnerEvaluations, outerFoldGeometry, innerCandidateEvidence, innerSelectionEvidence, outerRefitEvidence, outerOosPredictions, outerOosMetrics, nestedValidation };
 }

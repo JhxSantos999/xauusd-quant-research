@@ -19,7 +19,18 @@ function syntheticCandles(count = 620) {
   }
   return candles;
 }
-
+function singleClassCandles(count = 620) {
+  const candles = [];
+  const start = Date.parse('2021-01-01T00:00:00Z');
+  let previousClose = 100;
+  for (let i = 0; i < count; i++) {
+    const open = previousClose;
+    const close = open * Math.exp(0.002);
+    candles.push({ time: start + i * M5, open, high: close * 1.0002, low: open * 0.9998, close, tickVolume: 100, volume: 0, spread: 20 });
+    previousClose = close;
+  }
+  return candles;
+}
 function smokeGeometry(candles) {
   const start = candles[0].time;
   return {
@@ -34,7 +45,8 @@ test('real nested engine smoke crosses 6x16x3, selection, outer refit and nested
   const candles = syntheticCandles();
   const result = runNestedExperimentV1(candles, smokeGeometry(candles));
   assert.equal(result.attemptedInnerEvaluations, 288);
-  assert.equal(result.completedInnerEvaluations + result.invalidInnerEvaluations, 288);
+  assert.equal(result.completedInnerEvaluations, 288);
+  assert(result.invalidInnerEvaluations >= 0 && result.invalidInnerEvaluations <= 288);
   assert.equal(result.outerFoldGeometry.length, 6);
   assert(result.outerFoldGeometry.every((outer) => outer.inner.length === 3));
   assert(result.innerCandidateEvidence.every((outer) => outer.candidates.length === 16));
@@ -44,6 +56,18 @@ test('real nested engine smoke crosses 6x16x3, selection, outer refit and nested
   assert(result.outerOosPredictions.length > 0);
   assert.equal(new Set(result.outerOosPredictions.map((p) => `${p.asset}|${p.decisionTime}`)).size, result.outerOosPredictions.length);
   assert(['VALIDATED_V1', 'NOT_VALIDATED_V1'].includes(result.nestedValidation.status));
+});
+
+test('all structurally rejected Inner folds still count as completed evaluations and remain explicit evidence', () => {
+  const candles = singleClassCandles();
+  const result = runNestedExperimentV1(candles, smokeGeometry(candles));
+  assert.equal(result.attemptedInnerEvaluations, 288);
+  assert.equal(result.completedInnerEvaluations, 288);
+  assert.equal(result.invalidInnerEvaluations, 288);
+  assert(result.innerCandidateEvidence.every((outer) => outer.candidates.every((candidate) => candidate.folds.length === 3)));
+  assert(result.innerCandidateEvidence.every((outer) => outer.candidates.every((candidate) => candidate.folds.every((fold) => fold.integrityReasons?.includes('SINGLE_CLASS_TRAIN')))));
+  assert(result.innerSelectionEvidence.every((outer) => outer.selection.status === 'NO_VALID_LABEL_SPEC_V1'));
+  assert.equal(result.nestedValidation.status, 'NOT_VALIDATED_V1');
 });
 
 test('retention denominator is invariant across tau for the same h and Outer/Inner geometry', () => {

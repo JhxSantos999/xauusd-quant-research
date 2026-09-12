@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseMt5TabCsv } from '../data/mt5-parser.js';
-import { auditCandles, enforceDatasetContract, M5_TIMEFRAME_MS } from '../data/contracts.js';
+import { auditCandles, enforceDatasetContract, M5_TIMEFRAME_MS, type Candle } from '../data/contracts.js';
 import { runNestedExperimentV1 } from '../engine/nested-experiment.js';
 import {
   DEV_DATASET_BYTES_V1,
@@ -34,6 +34,7 @@ class OperationalExecutionError extends Error { override readonly name = 'Operat
 
 interface CliOptionsV1 { readonly dataset: string; readonly outputRoot?: string; readonly preflightOnly: boolean; }
 interface FileIdentityV1 { readonly path: string; readonly bytes: number; readonly sha256: string }
+interface DatasetEvidenceV1 { readonly path: string; readonly bytes: number; readonly sha256: string; readonly candles: number; readonly firstBarOpenTime: number; readonly lastBarOpenTime: number }
 
 function sha256Buffer(buffer: Buffer): string { return crypto.createHash('sha256').update(buffer).digest('hex'); }
 export function parseArgsV1(args: readonly string[]): CliOptionsV1 {
@@ -95,8 +96,27 @@ function sourceManifest(root: string): { files: Record<string, { bytes: number; 
   return { files, sha256: sha256Buffer(Buffer.from(canonical)) };
 }
 
+function validateParsedDataset(candles: readonly Candle[], datasetSha256: string): DatasetEvidenceV1 {
+  const audit = auditCandles(candles);
+  if (audit.candles !== DEV_DATASET_CANDLES_V1) throw new OperationalExecutionError(`DATASET_CANDLE_COUNT_MISMATCH:${audit.candles}`);
+  if (audit.duplicateTimestamps !== 0 || audit.nonIncreasingTimestamps !== 0 || audit.invalidGeometry !== 0 || audit.nonFiniteValues !== 0) throw new OperationalExecutionError(`DATASET_AUDIT_FAILED:${JSON.stringify(audit)}`);
+  try { enforceDatasetContract(candles, { datasetId: DEV_DATASET_ID_V1, datasetSha256, timeframeMs: M5_TIMEFRAME_MS, maxCandleOpenTime: DEV_MAX_BAR_OPEN_TIME_V1, maxInformationTime: DEV_INFORMATION_END_V1 }); }
+  catch (error) { throw new OperationalExecutionError(`DATASET_CONTRACT_FAILED:${error instanceof Error ? error.message : String(error)}`); }
+  if (audit.firstBarOpenTime !== DEV_FIRST_BAR_OPEN_TIME_V1) throw new OperationalExecutionError('DATASET_FIRST_BAR_MISMATCH');
+  if (audit.lastBarOpenTime !== DEV_MAX_BAR_OPEN_TIME_V1) throw new OperationalExecutionError('DATASET_LAST_BAR_MISMATCH');
+  return { path: '', bytes: 0, sha256: datasetSha256, candles: audit.candles, firstBarOpenTime: audit.firstBarOpenTime, lastBarOpenTime: audit.lastBarOpenTime };
+}
+
+export function assertExecutionSnapshotIdentityV1(filePath: string, expected: { readonly bytes: number; readonly sha256: string }): Buffer {
+  if (!fs.existsSync(filePath)) throw new OperationalExecutionError(`DATASET_CHANGED_AFTER_PREFLIGHT:MISSING:${filePath}`);
+  const raw = fs.readFileSync(filePath);
+  const sha256 = sha256Buffer(raw);
+  if (raw.length !== expected.bytes || sha256 !== expected.sha256) throw new OperationalExecutionError(`DATASET_CHANGED_AFTER_PREFLIGHT:${raw.length}:${sha256}`);
+  return raw;
+}
+
 export function preflightV1(root: string, datasetPath: string): {
-  readonly dataset: { readonly path: string; readonly bytes: number; readonly sha256: string; readonly candles: number; readonly firstBarOpenTime: number; readonly lastBarOpenTime: number };
+  readonly dataset: DatasetEvidenceV1;
   readonly preregistration: readonly { path: string; bytes: number; sha256: string }[];
   readonly implementationFreeze: readonly { path: string; bytes: number; sha256: string }[];
 } {
@@ -115,17 +135,20 @@ export function preflightV1(root: string, datasetPath: string): {
     if (raw.length !== identity.bytes || sha256 !== identity.sha256) throw new OperationalExecutionError(`IMPLEMENTATION_FREEZE_IDENTITY_MISMATCH:${identity.path}:${raw.length}:${sha256}`);
     return { path: identity.path, bytes: raw.length, sha256 };
   });
-  let candles;
+  let candles: Candle[];
   try { candles = parseMt5TabCsv(rawDataset.toString('utf8')); }
   catch (error) { throw new OperationalExecutionError(`DATASET_PARSE_FAILED:${error instanceof Error ? error.message : String(error)}`); }
-  const audit = auditCandles(candles);
-  if (audit.candles !== DEV_DATASET_CANDLES_V1) throw new OperationalExecutionError(`DATASET_CANDLE_COUNT_MISMATCH:${audit.candles}`);
-  if (audit.duplicateTimestamps !== 0 || audit.nonIncreasingTimestamps !== 0 || audit.invalidGeometry !== 0 || audit.nonFiniteValues !== 0) throw new OperationalExecutionError(`DATASET_AUDIT_FAILED:${JSON.stringify(audit)}`);
-  try { enforceDatasetContract(candles, { datasetId: DEV_DATASET_ID_V1, datasetSha256, timeframeMs: M5_TIMEFRAME_MS, maxCandleOpenTime: DEV_MAX_BAR_OPEN_TIME_V1, maxInformationTime: DEV_INFORMATION_END_V1 }); }
-  catch (error) { throw new OperationalExecutionError(`DATASET_CONTRACT_FAILED:${error instanceof Error ? error.message : String(error)}`); }
-  if (audit.firstBarOpenTime !== DEV_FIRST_BAR_OPEN_TIME_V1) throw new OperationalExecutionError('DATASET_FIRST_BAR_MISMATCH');
-  if (audit.lastBarOpenTime !== DEV_MAX_BAR_OPEN_TIME_V1) throw new OperationalExecutionError('DATASET_LAST_BAR_MISMATCH');
-  return { dataset: { path: absoluteDataset, bytes: rawDataset.length, sha256: datasetSha256, candles: audit.candles, firstBarOpenTime: audit.firstBarOpenTime, lastBarOpenTime: audit.lastBarOpenTime }, preregistration, implementationFreeze };
+  const checked = validateParsedDataset(candles, datasetSha256);
+  return { dataset: { ...checked, path: absoluteDataset, bytes: rawDataset.length }, preregistration, implementationFreeze };
+}
+
+function loadExecutionDatasetSnapshot(preflightDataset: DatasetEvidenceV1): Candle[] {
+  const raw = assertExecutionSnapshotIdentityV1(preflightDataset.path, preflightDataset);
+  let candles: Candle[];
+  try { candles = parseMt5TabCsv(raw.toString('utf8')); }
+  catch (error) { throw new OperationalExecutionError(`DATASET_CHANGED_AFTER_PREFLIGHT:PARSE:${error instanceof Error ? error.message : String(error)}`); }
+  validateParsedDataset(candles, preflightDataset.sha256);
+  return candles;
 }
 
 function uniqueExecutionDirectory(outputRoot: string): { executionId: string; outputDir: string } {
@@ -153,7 +176,27 @@ function artifactManifest(outputDir: string): { files: Record<string, { byte_len
   }
   return { files, manifest_sha256: sha256Buffer(Buffer.from(JSON.stringify(files))) };
 }
-function copyPreregistration(root: string, outputDir: string): void { for (const identity of Object.values(PREREGISTRATION_IDENTITIES_V1)) fs.copyFileSync(path.resolve(root, identity.path), path.join(outputDir, path.basename(identity.path))); }
+function copyVerifiedPreregistration(root: string, outputDir: string): void {
+  for (const identity of Object.values(PREREGISTRATION_IDENTITIES_V1)) {
+    const source = path.resolve(root, identity.path);
+    if (!fs.existsSync(source)) throw new OperationalExecutionError(`PREREG_CHANGED_AFTER_PREFLIGHT:MISSING:${identity.path}`);
+    const raw = fs.readFileSync(source);
+    const sha256 = sha256Buffer(raw);
+    if (raw.length !== identity.bytes || sha256 !== identity.sha256) throw new OperationalExecutionError(`PREREG_CHANGED_AFTER_PREFLIGHT:${identity.path}:${raw.length}:${sha256}`);
+    fs.writeFileSync(path.join(outputDir, path.basename(identity.path)), raw);
+  }
+}
+function persistFailureSafely(outputDir: string | undefined, executionId: string | undefined, error: unknown): void {
+  if (!outputDir || !executionId || !fs.existsSync(outputDir)) return;
+  try {
+    const failure = { execution_id: executionId, status: 'EXECUTION_INVALID_V1', utc_timestamp: new Date().toISOString(), error_name: error instanceof Error ? error.name : 'UnknownError', message: error instanceof Error ? error.message : String(error), stack: error instanceof Error ? error.stack : undefined };
+    writeJson(path.join(outputDir, 'execution_error.json'), failure);
+    const manifest = artifactManifest(outputDir);
+    writeJson(path.join(outputDir, 'empirical_execution_artifact_manifest.json'), { ...manifest, preregistration_manifest_sha256: PREREGISTRATION_IDENTITIES_V1.manifest.sha256 });
+  } catch (secondary) {
+    console.error(`FAILURE_ARTIFACT_PERSISTENCE_FAILED:${secondary instanceof Error ? secondary.message : String(secondary)}`);
+  }
+}
 
 export function executeProductionV1(root: string, options: CliOptionsV1): CliResultV1 {
   let preflight;
@@ -166,16 +209,21 @@ export function executeProductionV1(root: string, options: CliOptionsV1): CliRes
   console.log(JSON.stringify({ status: 'PREFLIGHT_PASS', ...preflight }, null, 2));
   if (options.preflightOnly) return { kind: 'PREFLIGHT_ONLY', status: 'PREFLIGHT_PASS' };
 
-  const { executionId, outputDir } = uniqueExecutionDirectory(options.outputRoot!);
-  const source = sourceManifest(root);
-  const git = gitInfo(root);
-  const provenance = { execution_id: executionId, utc_timestamp: new Date().toISOString(), runtime: { node: process.version, platform: process.platform, arch: process.arch }, git_commit: git.commit, git_dirty: git.dirty, quant_core_source_manifest_sha256: source.sha256, implementation_freeze: preflight.implementationFreeze, preregistration: preflight.preregistration, dataset: preflight.dataset };
-  writeJson(path.join(outputDir, 'execution_provenance.json'), provenance);
-  writeJson(path.join(outputDir, 'quant_core_source_manifest.json'), source);
-  copyPreregistration(root, outputDir);
-
+  let executionId: string | undefined;
+  let outputDir: string | undefined;
   try {
-    const candles = parseMt5TabCsv(fs.readFileSync(preflight.dataset.path, 'utf8'));
+    const created = uniqueExecutionDirectory(options.outputRoot!);
+    executionId = created.executionId;
+    outputDir = created.outputDir;
+
+    const candles = loadExecutionDatasetSnapshot(preflight.dataset);
+    const source = sourceManifest(root);
+    const git = gitInfo(root);
+    const provenance = { execution_id: executionId, utc_timestamp: new Date().toISOString(), runtime: { node: process.version, platform: process.platform, arch: process.arch }, git_commit: git.commit, git_dirty: git.dirty, quant_core_source_manifest_sha256: source.sha256, implementation_freeze: preflight.implementationFreeze, preregistration: preflight.preregistration, dataset: preflight.dataset, dataset_revalidated_before_fit: true };
+    writeJson(path.join(outputDir, 'execution_provenance.json'), provenance);
+    writeJson(path.join(outputDir, 'quant_core_source_manifest.json'), source);
+    copyVerifiedPreregistration(root, outputDir);
+
     const result = runNestedExperimentV1(candles, FROZEN_NESTED_GEOMETRY_V1);
     writeJson(path.join(outputDir, 'outer_fold_geometry.json'), result.outerFoldGeometry);
     writeJson(path.join(outputDir, 'inner_candidate_evidence.json'), result.innerCandidateEvidence);
@@ -196,12 +244,11 @@ export function executeProductionV1(root: string, options: CliOptionsV1): CliRes
     console.log(JSON.stringify({ status, execution_id: executionId, attempted_inner_evaluations: result.attemptedInnerEvaluations, completed_inner_evaluations: result.completedInnerEvaluations, invalid_inner_evaluations: result.invalidInnerEvaluations, output_dir: outputDir, artifact_manifest_sha256: manifest.manifest_sha256 }, null, 2));
     return { kind: 'EXECUTION', status, outputDir };
   } catch (error) {
-    const failure = { execution_id: executionId, status: 'EXECUTION_INVALID_V1', utc_timestamp: new Date().toISOString(), error_name: error instanceof Error ? error.name : 'UnknownError', message: error instanceof Error ? error.message : String(error), stack: error instanceof Error ? error.stack : undefined };
-    writeJson(path.join(outputDir, 'execution_error.json'), failure);
-    const manifest = artifactManifest(outputDir);
-    writeJson(path.join(outputDir, 'empirical_execution_artifact_manifest.json'), { ...manifest, preregistration_manifest_sha256: PREREGISTRATION_IDENTITIES_V1.manifest.sha256 });
-    console.error('EXECUTION_INVALID_V1'); console.error(failure.message);
-    return { kind: 'EXECUTION', status: 'EXECUTION_INVALID_V1', outputDir };
+    persistFailureSafely(outputDir, executionId, error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('EXECUTION_INVALID_V1');
+    console.error(message);
+    return { kind: 'EXECUTION', status: 'EXECUTION_INVALID_V1', ...(outputDir ? { outputDir } : {}) };
   }
 }
 

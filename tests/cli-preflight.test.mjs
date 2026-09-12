@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { executeProductionV1, parseArgsV1 } from '../dist/quant-core/cli/run-nested-v1.js';
+import crypto from 'node:crypto';
+import { assertExecutionSnapshotIdentityV1, executeProductionV1, parseArgsV1 } from '../dist/quant-core/cli/run-nested-v1.js';
 
 function captureConsole(fn) {
   const errors = [];
@@ -48,11 +49,26 @@ test('wrong dataset identity aborts preregistration before any artifact director
   fs.rmSync(root, { recursive: true, force: true });
 });
 
-test('production source contains no synthetic bypass flags or dummy fitting vectors', () => {
+test('execution snapshot identity guard detects mutation after a successful identity observation', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'quant-cli-snapshot-'));
+  const dataset = path.join(root, 'snapshot.bin');
+  const original = Buffer.from('stable-snapshot');
+  fs.writeFileSync(dataset, original);
+  const expected = { bytes: original.length, sha256: crypto.createHash('sha256').update(original).digest('hex') };
+  assert.deepEqual(assertExecutionSnapshotIdentityV1(dataset, expected), original);
+  fs.writeFileSync(dataset, Buffer.from('mutated-snapshot'));
+  assert.throws(() => assertExecutionSnapshotIdentityV1(dataset, expected), /DATASET_CHANGED_AFTER_PREFLIGHT/);
+  fs.rmSync(root, { recursive: true, force: true });
+});
+
+test('production source contains no synthetic bypass flags or dummy fitting vectors and includes post-preflight identity guards', () => {
   const source = fs.readFileSync('quant-core/cli/run-nested-v1.ts', 'utf8');
   assert.equal(source.includes('--test-geometry'), false);
   assert.equal(source.includes('dummyX'), false);
   assert.equal(source.includes('dummyY'), false);
   assert.equal(source.includes('DRY-RUN READY'), false);
   assert.equal(source.includes('VALIDATED_V1 (DRY-RUN READY)'), false);
+  assert.equal(source.includes('DATASET_CHANGED_AFTER_PREFLIGHT'), true);
+  assert.equal(source.includes('PREREG_CHANGED_AFTER_PREFLIGHT'), true);
+  assert.equal(source.includes('persistFailureSafely'), true);
 });
