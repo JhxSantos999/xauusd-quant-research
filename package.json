@@ -6,7 +6,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test tests/*.test.mjs"
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "validate:dev": "npm run build && node scripts/validate-dev-dataset.mjs"
   },
   "devDependencies": {
     "typescript": "^5.8.3"
