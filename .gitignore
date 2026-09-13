@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+.DS_Store
+*.log
+
+# Local research data must never be committed
+data/*.csv
+data/*.tsv
+
+# Empirical outputs remain local until explicitly audited
+artifacts/*
+!artifacts/.gitkeep
+
+# Local environment
+.env
+.env.*

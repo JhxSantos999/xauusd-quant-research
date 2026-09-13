@@ -1,0 +1,27 @@
+{
+  "datasetId": "XAUUSD_M5_DEV_V1",
+  "sha256": "a34f2d5469782fccd1e8479ceea5c81b633aa5301b7ed47447049323850de8f5",
+  "byteLength": 6285976,
+  "candles": 101108,
+  "firstBarOpenTime": "2025-04-07T01:00:00Z",
+  "lastBarOpenTime": "2026-09-09T05:25:00Z",
+  "maxInformationTime": "2026-09-09T05:30:00Z",
+  "labelCoverage": [
+    {"h":3,"tau":0,"totalCandidates":101105,"valid":99887,"neutral":108,"invalidGap":1110,"class1":50860,"class0":49027},
+    {"h":3,"tau":0.0002,"totalCandidates":101105,"valid":82948,"neutral":17047,"invalidGap":1110,"class1":42367,"class0":40581},
+    {"h":3,"tau":0.0004,"totalCandidates":101105,"valid":67333,"neutral":32662,"invalidGap":1110,"class1":34531,"class0":32802},
+    {"h":3,"tau":0.0008,"totalCandidates":101105,"valid":43378,"neutral":56617,"invalidGap":1110,"class1":22248,"class0":21130},
+    {"h":6,"tau":0,"totalCandidates":101102,"valid":98809,"neutral":73,"invalidGap":2220,"class1":50310,"class0":48499},
+    {"h":6,"tau":0.0002,"totalCandidates":101102,"valid":86952,"neutral":11930,"invalidGap":2220,"class1":44415,"class0":42537},
+    {"h":6,"tau":0.0004,"totalCandidates":101102,"valid":75693,"neutral":23189,"invalidGap":2220,"class1":38809,"class0":36884},
+    {"h":6,"tau":0.0008,"totalCandidates":101102,"valid":56213,"neutral":42669,"invalidGap":2220,"class1":29001,"class0":27212},
+    {"h":12,"tau":0,"totalCandidates":101096,"valid":96599,"neutral":59,"invalidGap":4438,"class1":49361,"class0":47238},
+    {"h":12,"tau":0.0002,"totalCandidates":101096,"valid":88668,"neutral":7990,"invalidGap":4438,"class1":45444,"class0":43224},
+    {"h":12,"tau":0.0004,"totalCandidates":101096,"valid":81037,"neutral":15621,"invalidGap":4438,"class1":41652,"class0":39385},
+    {"h":12,"tau":0.0008,"totalCandidates":101096,"valid":66638,"neutral":30020,"invalidGap":4438,"class1":34555,"class0":32083},
+    {"h":24,"tau":0,"totalCandidates":101084,"valid":92186,"neutral":32,"invalidGap":8866,"class1":47456,"class0":44730},
+    {"h":24,"tau":0.0002,"totalCandidates":101084,"valid":87140,"neutral":5078,"invalidGap":8866,"class1":44963,"class0":42177},
+    {"h":24,"tau":0.0004,"totalCandidates":101084,"valid":81959,"neutral":10259,"invalidGap":8866,"class1":42354,"class0":39605},
+    {"h":24,"tau":0.0008,"totalCandidates":101084,"valid":72034,"neutral":20184,"invalidGap":8866,"class1":37411,"class0":34623}
+  ]
+}
