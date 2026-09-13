@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - audit/quant-core-v1
+      - audit/final-dev-v1r1
   pull_request:
     branches:
       - main
