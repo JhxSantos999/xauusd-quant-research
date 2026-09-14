@@ -17,6 +17,7 @@ on:
       - audit/paper-journal-demo-v1
       - audit/dev-signal-replay-v1
       - audit/dev-retrospective-observability-v1
+      - audit/mt5-readonly-signal-receiver-v1
   pull_request:
     branches:
       - main
@@ -78,7 +79,12 @@ jobs:
             quant-core/replay/dev-retrospective-observability-v1.ts \
             quant-core/cli/run-dev-retrospective-observability-v1.ts \
             quant-core/research/dev_retrospective_observability_v1.spec.json \
-            quant-core/research/dev_retrospective_observability_v1.implementation.json; do
+            quant-core/research/dev_retrospective_observability_v1.implementation.json \
+            adapters/mt5/readonly-signal-transport-v1.ts \
+            quant-core/cli/run-mt5-readonly-transport-v1.ts \
+            adapters/mt5/MT5_ReadOnly_Signal_Receiver_V1.mq5 \
+            adapters/mt5/mt5_readonly_signal_receiver_v1.spec.json \
+            adapters/mt5/mt5_readonly_signal_receiver_v1.implementation.json; do
             printf '%s bytes=' "$f"
             wc -c < "$f" | tr -d ' \n'
             printf ' sha256='
