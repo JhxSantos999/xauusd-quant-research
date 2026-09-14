@@ -14,6 +14,6 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true
   },
-  "include": ["quant-core/**/*.ts"],
+  "include": ["quant-core/**/*.ts", "adapters/**/*.ts"],
   "exclude": ["node_modules", "dist", "artifacts", "data"]
 }
