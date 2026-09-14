@@ -67,7 +67,8 @@ jobs:
             adapters/paper/file-paper-journal-v1.ts \
             adapters/paper/paper-journal-demo-v1.ts \
             quant-core/cli/run-paper-journal-demo-v1.ts \
-            adapters/paper/paper_journal_demo_v1.spec.json; do
+            adapters/paper/paper_journal_demo_v1.spec.json \
+            adapters/paper/paper_journal_demo_v1.implementation.json; do
             printf '%s bytes=' "$f"
             wc -c < "$f" | tr -d ' \n'
             printf ' sha256='
