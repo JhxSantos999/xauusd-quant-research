@@ -1,0 +1,43 @@
+{
+  "version": "paper_journal_demo_v1_implementation",
+  "status": "FROZEN_OBSERVABILITY_DEMO_ONLY",
+  "base_frozen_paper_monitor_commit": "3ae467e75fa4f847b565b6f4bb57bf52bcc4c50f",
+  "files": {
+    "adapters/paper/file-paper-journal-v1.ts": {
+      "bytes": 1714,
+      "sha256": "edb0dad61fc1a3e11b54be1748fc87bb1724f99a41546bd4b88c36adb0baef77"
+    },
+    "adapters/paper/paper-journal-demo-v1.ts": {
+      "bytes": 4850,
+      "sha256": "a58ae7a2edc349a61a5a696834442de6e4d86db95782d56548783ed7a04cc8dc"
+    },
+    "quant-core/cli/run-paper-journal-demo-v1.ts": {
+      "bytes": 1140,
+      "sha256": "153fa5dd2bff495478cac132cd085e80c46c2e01d2469bdc51ba16fee658b089"
+    },
+    "adapters/paper/paper_journal_demo_v1.spec.json": {
+      "bytes": 2482,
+      "sha256": "82f756673f33e7ac49129448ca679635ee0d19b291dfa99ee3619bd91852872e"
+    }
+  },
+  "upstream_frozen": {
+    "signal_bridge_v1_source_sha256": "5a9be8586679831610fd18e045d5efdf8f947ff12e2b95d3f66c77b95f961626",
+    "paper_monitor_adapter_v1_source_sha256": "2f00ab549b1087db390bd1a08519e9230e002b6bd04fe623ee8aff537483b935"
+  },
+  "evidence": {
+    "initial_ci_run": 34890014025,
+    "initial_tests_passed": 165,
+    "initial_tests_failed": 0,
+    "typecheck_passed": true
+  },
+  "scope": {
+    "synthetic_demo_only": true,
+    "local_jsonl_persistence": true,
+    "future_lockbox_accessed": false,
+    "pnl_evaluated": false,
+    "live_execution": false,
+    "paper_fill_simulation": false,
+    "network_transport": false,
+    "browser_automation": false
+  }
+}
