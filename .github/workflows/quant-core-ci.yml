@@ -8,6 +8,7 @@ on:
       - audit/final-signal-v1r1
       - audit/risk-engine-v1
       - audit/execution-engine-v1
+      - audit/economic-evaluation-v1
   pull_request:
     branches:
       - main
