@@ -11,6 +11,7 @@ on:
       - audit/economic-evaluation-v1
       - audit/mt5-metadata-binding-v1
       - audit/economic-lockbox-runner-v1r1
+      - audit/execution-v1r2-lockbox-hardening
   pull_request:
     branches:
       - main
@@ -30,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.10.0'
 
       - name: Install TypeScript
         run: npm install --no-audit --no-fund
@@ -40,3 +41,22 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Report V1R2 source identities
+        shell: bash
+        run: |
+          for f in \
+            quant-core/execution/execution-engine-v1r2.ts \
+            quant-core/economic/economic-lockbox-evaluator-v1r2.ts \
+            quant-core/lockbox/one-shot-registry-v1r2.ts \
+            quant-core/cli/run-economic-preflight-v1r2.ts \
+            quant-core/cli/run-economic-lockbox-v1r2.ts \
+            quant-core/cli/run-economic-lockbox-v1r2-production.ts \
+            quant-core/research/economic-evaluation-v1r2-contracts.ts \
+            quant-core/research/economic_evaluation_v1r2.spec.json \
+            quant-core/research/infinox_stp_commission_evidence_v1.json; do
+            printf '%s bytes=' "$f"
+            wc -c < "$f" | tr -d ' \n'
+            printf ' sha256='
+            sha256sum "$f" | awk '{print $1}'
+          done
