@@ -1,0 +1,61 @@
+{
+  "version": "paper_journal_demo_v1",
+  "status": "FROZEN_OBSERVABILITY_DEMO_ONLY",
+  "purpose": "Local deterministic end-to-end demonstration of Signal Bridge V1 -> Paper Monitor Adapter V1 -> append-only JSONL journal, using synthetic signals only.",
+  "mode": "SYNTHETIC_DEMO_ONLY",
+  "upstream": {
+    "signal_bridge_v1": {
+      "frozen_commit": "14312a3675df3ae11d7f514909c7eafbe9ae7d32",
+      "source_sha256": "5a9be8586679831610fd18e045d5efdf8f947ff12e2b95d3f66c77b95f961626",
+      "spec_sha256": "93320a196c8f43d604d8fbe4333f5ef761e47db41fac7e3b151598e98fa20027",
+      "implementation_sha256": "109563d16ed7faa4610149c00086893d5b0cf18dff61b0e0947fe869913f2c57"
+    },
+    "paper_monitor_adapter_v1": {
+      "frozen_commit": "3ae467e75fa4f847b565b6f4bb57bf52bcc4c50f",
+      "source_sha256": "2f00ab549b1087db390bd1a08519e9230e002b6bd04fe623ee8aff537483b935",
+      "spec_sha256": "ff40cb6d69589c53c81db33839593ef169a7542f1cd29af3abc4efe5d69e246d",
+      "implementation_sha256": "0abff3631f21fcddb9e7941841e22af102fa3ab3e505f42f09b8e678c3df1de6"
+    }
+  },
+  "journal_contract": {
+    "format": "UTF-8 JSON Lines",
+    "extension": ".jsonl",
+    "one_record_per_line": true,
+    "append_only_writer": true,
+    "multiline_records_forbidden": true,
+    "invalid_json_forbidden": true,
+    "writer_does_not_create_or_modify_signals": true,
+    "writer_does_not_create_or_modify_risk_decisions": true
+  },
+  "demo_fixture": {
+    "synthetic_only": true,
+    "record_count": 3,
+    "decision_sequence": ["LONG", "SHORT", "NO_TRADE"],
+    "position_state": "FLAT",
+    "account_equity_quote": 10000,
+    "receipt_timing_is_telemetry_only": true,
+    "output_file_must_not_preexist": true,
+    "rerun_same_output_fails_closed": true,
+    "content_is_deterministic_across_output_paths": true
+  },
+  "explicit_exclusions": {
+    "future_lockbox_input": false,
+    "future_lockbox_access": false,
+    "economic_evaluation": false,
+    "pnl": false,
+    "paper_fill_simulation": false,
+    "execution_engine": false,
+    "broker_connection": false,
+    "order_submission": false,
+    "network_transport": false,
+    "browser_automation": false,
+    "mt5_live_adapter": false,
+    "real_market_signal_input": false
+  },
+  "governance": {
+    "upstream_frozen_files_are_not_modified": true,
+    "demo_output_is_observability_evidence_only": true,
+    "no_profitability_claim": true,
+    "future_components_must_consume_this_contract_without_mutating_frozen_upstream": true
+  }
+}
