@@ -1,13 +1,13 @@
 export const EXECUTION_ENGINE_V1_SPEC_IDENTITY = {
   path: 'quant-core/research/execution_engine_v1.spec.json',
-  bytes: 3520,
-  sha256: 'PLACEHOLDER_SPEC_SHA256',
+  bytes: 3200,
+  sha256: '36222916f96cc5e1459281838199fbe6aac8b109e3a5a92e8115c08e5bf67f3d',
 } as const;
 
 export const EXECUTION_ENGINE_V1_IMPLEMENTATION_BINDING = {
   path: 'quant-core/research/execution_engine_v1.implementation.json',
-  bytes: 0,
-  sha256: 'PLACEHOLDER_BINDING_SHA256',
+  bytes: 657,
+  sha256: '819c6deac5a21426c3db85e496215633031c9fa5d8e3382dacc68d33d0c29e86',
 } as const;
 
 export const FROZEN_EXECUTION_BROKER_METADATA_V1 = {
