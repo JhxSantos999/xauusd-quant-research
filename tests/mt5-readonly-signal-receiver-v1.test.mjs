@@ -109,7 +109,7 @@ test('MT5 read-only transport deterministically serializes a frozen DEV paper-mo
   assert.equal(message.paperMonitorRecordSha256, sha256(line));
   assert.equal(serialized.split(';').length, 19);
   assert.equal(serialized.split(';')[0], MT5_READONLY_SIGNAL_TRANSPORT_V1_MAGIC);
-  assert.equal(serialized.includes('NA'), false);
+  assert.deepEqual(serialized.split(';').slice(9, 14), ['0.0025', '25', '10000', '3.9524999999999486', String(LAST + 900000)]);
 });
 
 test('MT5 read-only transport preserves NO_TRADE as telemetry only with NA risk fields', () => {
