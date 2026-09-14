@@ -10,6 +10,7 @@ on:
       - audit/execution-engine-v1
       - audit/economic-evaluation-v1
       - audit/mt5-metadata-binding-v1
+      - audit/economic-lockbox-runner-v1r1
   pull_request:
     branches:
       - main
