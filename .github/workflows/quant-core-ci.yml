@@ -15,6 +15,7 @@ on:
       - audit/signal-bridge-v1
       - audit/paper-monitor-adapter-v1
       - audit/paper-journal-demo-v1
+      - audit/dev-signal-replay-v1
   pull_request:
     branches:
       - main
@@ -45,7 +46,7 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Report V1R2, Signal Bridge V1, Paper Monitor V1 and Paper Journal Demo V1 source identities
+      - name: Report frozen component source identities
         shell: bash
         run: |
           for f in \
@@ -68,7 +69,11 @@ jobs:
             adapters/paper/paper-journal-demo-v1.ts \
             quant-core/cli/run-paper-journal-demo-v1.ts \
             adapters/paper/paper_journal_demo_v1.spec.json \
-            adapters/paper/paper_journal_demo_v1.implementation.json; do
+            adapters/paper/paper_journal_demo_v1.implementation.json \
+            quant-core/replay/dev-signal-replay-v1.ts \
+            quant-core/cli/run-dev-signal-replay-v1.ts \
+            quant-core/research/dev_signal_replay_v1.spec.json \
+            quant-core/research/dev_signal_replay_v1.implementation.json; do
             printf '%s bytes=' "$f"
             wc -c < "$f" | tr -d ' \n'
             printf ' sha256='

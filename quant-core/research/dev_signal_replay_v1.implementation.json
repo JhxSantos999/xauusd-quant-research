@@ -1,0 +1,41 @@
+{
+  "version": "dev_signal_replay_v1_implementation",
+  "status": "FROZEN_DEV_REPLAY_OBSERVABILITY_ONLY",
+  "base_frozen_checkpoint": {
+    "branch": "empirical/paper-journal-demo-v1-frozen-run",
+    "commit": "b95be040c5320b65209a8e9f90a03a54cd1d05f8",
+    "tree": "427dd7f49c4104e55be94b0cf929781a605abcd7"
+  },
+  "source_files": {
+    "quant-core/replay/dev-signal-replay-v1.ts": {
+      "bytes": 5579,
+      "sha256": "c862b10b46c78a518bed97c3e06896cb06d0487c2f51d48fa2be799b232ca42a"
+    },
+    "quant-core/cli/run-dev-signal-replay-v1.ts": {
+      "bytes": 7519,
+      "sha256": "9613d8d9d2d77a3f743f9ffd0fb2b6cd83158eb2638582c19c58f8f77d4e5855"
+    }
+  },
+  "spec": {
+    "path": "quant-core/research/dev_signal_replay_v1.spec.json",
+    "bytes": 2596,
+    "sha256": "3258dcd24c821b9109bbc654b393707f30e8099c5ca94d9d6a0b93e3970eb0ba"
+  },
+  "upstream_bindings": {
+    "paper_journal_demo_v1_commit": "b95be040c5320b65209a8e9f90a03a54cd1d05f8",
+    "paper_monitor_adapter_v1_source_sha256": "2f00ab549b1087db390bd1a08519e9230e002b6bd04fe623ee8aff537483b935",
+    "signal_bridge_v1_source_sha256": "5a9be8586679831610fd18e045d5efdf8f947ff12e2b95d3f66c77b95f961626",
+    "risk_engine_v1_source_sha256": "3bf4f7c079c2748e25e22fe670c829a302b539162dd757c42ffda3e4c21a9bf0",
+    "final_signal_execution_id": "final_signal_v1r1_20260913235306128",
+    "final_signal_model_sha256": "f4869afd3cfeb681bca356ee08d80a63fb617a841427932a571ff2e2306f7655",
+    "final_signal_calibrator_sha256": "6d851a2eaa61deaa00bc2bc7899ad40fabc5b8758cd58ed933782709996ac17c",
+    "dev_dataset_sha256": "a34f2d5469782fccd1e8479ceea5c81b633aa5301b7ed47447049323850de8f5"
+  },
+  "governance": {
+    "future_lockbox_access": false,
+    "post_dev_market_data": false,
+    "pnl_evaluated": false,
+    "paper_fill_simulated": false,
+    "live_execution": false
+  }
+}
