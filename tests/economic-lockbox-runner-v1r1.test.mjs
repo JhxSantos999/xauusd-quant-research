@@ -22,6 +22,10 @@ function sha256(raw) {
   return crypto.createHash('sha256').update(raw).digest('hex');
 }
 
+function assertClose(actual, expected, tolerance = 1e-12) {
+  assert.ok(Math.abs(actual - expected) <= tolerance, `expected ${actual} to be within ${tolerance} of ${expected}`);
+}
+
 test('Economic Lockbox Runner V1R1 spec, implementation and source identities are frozen', () => {
   for (const identity of [
     ECONOMIC_LOCKBOX_RUNNER_V1R1_SPEC_IDENTITY,
@@ -75,10 +79,10 @@ test('production source gates time before any lockbox filesystem read', () => {
 });
 
 test('adverse slippage is directionally correct for LONG and SHORT on entry and exit', () => {
-  assert.equal(adverseSlippedPriceV1R1('LONG', 'ENTRY', 100, 0.2, 0.5), 100.1);
-  assert.equal(adverseSlippedPriceV1R1('LONG', 'EXIT', 100, 0.2, 0.5), 99.9);
-  assert.equal(adverseSlippedPriceV1R1('SHORT', 'ENTRY', 100, 0.2, 0.5), 99.9);
-  assert.equal(adverseSlippedPriceV1R1('SHORT', 'EXIT', 100, 0.2, 0.5), 100.1);
+  assertClose(adverseSlippedPriceV1R1('LONG', 'ENTRY', 100, 0.2, 0.5), 100.1);
+  assertClose(adverseSlippedPriceV1R1('LONG', 'EXIT', 100, 0.2, 0.5), 99.9);
+  assertClose(adverseSlippedPriceV1R1('SHORT', 'ENTRY', 100, 0.2, 0.5), 99.9);
+  assertClose(adverseSlippedPriceV1R1('SHORT', 'EXIT', 100, 0.2, 0.5), 100.1);
 });
 
 const lineage = {
@@ -117,11 +121,11 @@ test('scenario simulation uses executable Bid/Ask, fixed base stop path and inde
   assert.equal(base.summary.filledTrades, 1);
   assert.equal(base.trades[0].side, 'LONG');
   assert.equal(base.trades[0].exitReason, 'TIME_EXIT');
-  assert.equal(base.trades[0].baseEntryPrice, 100.1);
-  assert.equal(base.trades[0].baseExitPrice, 101);
+  assertClose(base.trades[0].baseEntryPrice, 100.1);
+  assertClose(base.trades[0].baseExitPrice, 101);
   assert.ok(base.trades[0].pnlQuote > stress.trades[0].pnlQuote);
-  assert.equal(stress.trades[0].scenarioEntryPrice, 100.15);
-  assert.equal(stress.trades[0].scenarioExitPrice, 100.95);
+  assertClose(stress.trades[0].scenarioEntryPrice, 100.15);
+  assertClose(stress.trades[0].scenarioExitPrice, 100.95);
 });
 
 test('missing one of the four exact M5 execution bars rejects the intent as NO_FILL_SESSION_WINDOW', () => {
