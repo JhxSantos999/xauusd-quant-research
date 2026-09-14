@@ -11,6 +11,7 @@ on:
       - audit/economic-evaluation-v1
       - audit/mt5-metadata-binding-v1
       - audit/economic-lockbox-runner-v1r1
+      - audit/execution-v1r2-lockbox-hardening
   pull_request:
     branches:
       - main
@@ -30,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.10.0'
 
       - name: Install TypeScript
         run: npm install --no-audit --no-fund
