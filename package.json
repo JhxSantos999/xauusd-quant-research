@@ -14,6 +14,7 @@
     "run:final-dev:v1r1": "npm run build && node dist/quant-core/cli/run-final-dev-v1r1.js",
     "preflight:final-signal:v1r1": "npm run build && node dist/quant-core/cli/run-final-signal-v1r1.js --preflight-only",
     "run:final-signal:v1r1": "npm run build && node dist/quant-core/cli/run-final-signal-v1r1.js",
+    "preflight:risk:v1": "npm run build && node dist/quant-core/cli/run-risk-preflight-v1.js",
     "run:nested:v1": "npm run build && node dist/quant-core/cli/run-nested-v1.js"
   },
   "devDependencies": {

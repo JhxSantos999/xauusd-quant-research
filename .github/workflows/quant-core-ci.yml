@@ -6,6 +6,7 @@ on:
       - audit/quant-core-v1
       - audit/final-dev-v1r1
       - audit/final-signal-v1r1
+      - audit/risk-engine-v1
   pull_request:
     branches:
       - main
