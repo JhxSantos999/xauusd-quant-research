@@ -13,6 +13,7 @@ on:
       - audit/economic-lockbox-runner-v1r1
       - audit/execution-v1r2-lockbox-hardening
       - audit/signal-bridge-v1
+      - audit/paper-monitor-adapter-v1
   pull_request:
     branches:
       - main
@@ -43,7 +44,7 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Report V1R2 and Signal Bridge V1 source identities
+      - name: Report V1R2, Signal Bridge V1 and Paper Monitor Adapter V1 source identities
         shell: bash
         run: |
           for f in \
@@ -58,7 +59,9 @@ jobs:
             quant-core/research/infinox_stp_commission_evidence_v1.json \
             quant-core/bridge/signal-bridge-v1.ts \
             quant-core/research/signal_bridge_v1.spec.json \
-            quant-core/research/signal_bridge_v1.implementation.json; do
+            quant-core/research/signal_bridge_v1.implementation.json \
+            adapters/paper/paper-monitor-adapter-v1.ts \
+            adapters/paper/paper_monitor_adapter_v1.spec.json; do
             printf '%s bytes=' "$f"
             wc -c < "$f" | tr -d ' \n'
             printf ' sha256='
