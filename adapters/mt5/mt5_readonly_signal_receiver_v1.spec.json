@@ -1,0 +1,62 @@
+{
+  "schema_version": "mt5_readonly_signal_receiver_v1",
+  "status": "FROZEN_PRE_LOCKBOX_READ_ONLY_TRANSPORT",
+  "purpose": "Transport one already-authorized DEV paper-monitor observation into MetaTrader 5 for display/log validation only.",
+  "upstream": {
+    "base_checkpoint": "empirical/dev-retrospective-observability-v1-frozen-run",
+    "base_commit": "e1f31df118a4c94521d0487e4978bbc1bf5a56d3",
+    "final_signal_execution_id": "final_signal_v1r1_20260913235306128",
+    "final_signal_model_sha256": "f4869afd3cfeb681bca356ee08d80a63fb617a841427932a571ff2e2306f7655",
+    "final_signal_calibrator_sha256": "6d851a2eaa61deaa00bc2bc7899ad40fabc5b8758cd58ed933782709996ac17c"
+  },
+  "source_contract": {
+    "journal": "DEV Retrospective Observability V1 canonical JSONL only",
+    "record_count": 288,
+    "first_decision_time": 1788842100000,
+    "last_decision_time": 1788931800000,
+    "max_information_time": 1788931800000,
+    "receipt_delay_ms": 0,
+    "selected_record": "last canonical journal record only"
+  },
+  "transport": {
+    "format": "single-row semicolon-delimited ASCII CSV",
+    "magic": "MT5_READONLY_SIGNAL_V1",
+    "field_count": 19,
+    "output_policy": "one-shot create-only; existing output fails closed",
+    "filesystem_only": true,
+    "network": false,
+    "browser": false
+  },
+  "mt5_receiver": {
+    "program_type": "Expert Advisor used only as timer-driven file reader",
+    "default_file": "xauusd_readonly_signal_v1.csv",
+    "file_scope": "terminal MQL5/Files",
+    "poll_seconds_default": 1,
+    "actions": [
+      "read",
+      "validate framing and frozen lineage",
+      "Comment display",
+      "Print log"
+    ],
+    "cryptographic_note": "The MT5 receiver validates fixed lineage strings and SHA-256 field format but does not recompute upstream hashes; cryptographic validation remains upstream in the Node pipeline.",
+    "order_submission": false,
+    "position_management": false,
+    "market_data_read": false
+  },
+  "interpretation_guard": {
+    "predictive_validity_claimed": false,
+    "performance_claimed": false,
+    "execution_quality_claimed": false,
+    "v1_tuning_allowed": false
+  },
+  "explicit_exclusions": {
+    "future_lockbox_access": false,
+    "post_dev_market_data": false,
+    "pnl": false,
+    "win_loss": false,
+    "paper_fill_simulation": false,
+    "execution_engine_invocation": false,
+    "broker_order_submission": false,
+    "live_execution": false
+  }
+}
