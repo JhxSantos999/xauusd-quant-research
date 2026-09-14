@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -18,6 +19,27 @@ import {
 async function tempDir() {
   return fs.mkdtemp(path.join(os.tmpdir(), 'paper-journal-demo-v1-'));
 }
+
+async function sha256File(filePath) {
+  const bytes = await fs.readFile(filePath);
+  return crypto.createHash('sha256').update(bytes).digest('hex');
+}
+
+test('Paper Journal Demo V1 spec, implementation binding and source identities are frozen', async () => {
+  const implementation = JSON.parse(await fs.readFile('adapters/paper/paper_journal_demo_v1.implementation.json', 'utf8'));
+  assert.equal(implementation.status, 'FROZEN_OBSERVABILITY_DEMO_ONLY');
+  assert.equal(implementation.base_frozen_paper_monitor_commit, '3ae467e75fa4f847b565b6f4bb57bf52bcc4c50f');
+  for (const [filePath, identity] of Object.entries(implementation.files)) {
+    const bytes = await fs.readFile(filePath);
+    assert.equal(bytes.length, identity.bytes, `byte length mismatch: ${filePath}`);
+    assert.equal(await sha256File(filePath), identity.sha256, `sha256 mismatch: ${filePath}`);
+  }
+  assert.equal(implementation.upstream_frozen.signal_bridge_v1_source_sha256, '5a9be8586679831610fd18e045d5efdf8f947ff12e2b95d3f66c77b95f961626');
+  assert.equal(implementation.upstream_frozen.paper_monitor_adapter_v1_source_sha256, '2f00ab549b1087db390bd1a08519e9230e002b6bd04fe623ee8aff537483b935');
+  assert.equal(implementation.scope.future_lockbox_accessed, false);
+  assert.equal(implementation.scope.pnl_evaluated, false);
+  assert.equal(implementation.scope.live_execution, false);
+});
 
 test('File Paper Journal V1 appends valid one-line JSON records exactly and rejects invalid input', async () => {
   const dir = await tempDir();
