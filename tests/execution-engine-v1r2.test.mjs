@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
 
 import {
   EXECUTION_V1R2_BROKER_STOP_REJECTION,
@@ -36,6 +38,23 @@ function intent(overrides = {}) {
     ...overrides,
   };
 }
+
+function sha256(raw) {
+  return crypto.createHash('sha256').update(raw).digest('hex');
+}
+
+test('Execution V1R2 spec, implementation binding and source identities are frozen', () => {
+  const identities = [
+    ['quant-core/research/execution_engine_v1r2.spec.json', 2576, 'f1d5f63966557a71c8f3bb8f020711f85e01a80a6dd285b08e4c2e5671428a5d'],
+    ['quant-core/research/execution_engine_v1r2.implementation.json', 834, 'e164324dd76a0a9f23994b0a56e72938d80bc84f2fe33ed7433fb0a84ec5c2f3'],
+    ['quant-core/execution/execution-engine-v1r2.ts', 6267, 'e6dd3e0b4521b18372149bd9d8980ff2aec33f115e311f459e96ecf61dd5077e'],
+  ];
+  for (const [path, bytes, hash] of identities) {
+    const raw = fs.readFileSync(path);
+    assert.equal(raw.length, bytes);
+    assert.equal(sha256(raw), hash);
+  }
+});
 
 test('Execution V1R2 preserves exact Risk stop and never widens it to broker minimum', () => {
   const i = intent({ stopDistancePrice: 0.21 });
