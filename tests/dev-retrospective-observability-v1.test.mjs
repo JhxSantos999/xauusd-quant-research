@@ -107,7 +107,8 @@ test('DEV retrospective observation deterministically traverses frozen signal, r
   const b = buildDevRetrospectiveObservationV1(0, feature(24, decisionTime), 3500, model, calibrator);
   assert.deepEqual(a, b);
   assert.equal(a.signal.decisionTime, decisionTime);
-  assert.equal(a.riskDecision.asset, 'XAUUSD');
+  assert.equal(a.riskDecision.decisionTime, decisionTime);
+  assert.equal(a.riskDecision.version, 'risk_engine_v1');
   assert.match(a.envelope.eventId, /^[0-9a-f]{64}$/);
 });
 
