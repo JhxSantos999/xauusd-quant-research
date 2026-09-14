@@ -1,0 +1,64 @@
+{
+  "version": "dev_signal_replay_v1",
+  "status": "FROZEN_DEV_REPLAY_OBSERVABILITY_ONLY",
+  "mode": "DEV_REPLAY_ONLY",
+  "purpose": "Exercise the frozen Final Signal V1R1 inference path through Risk Engine V1, Signal Bridge V1 and Paper Monitor JSONL using only the exact canonical DEV dataset.",
+  "base_frozen_checkpoint": {
+    "branch": "empirical/paper-journal-demo-v1-frozen-run",
+    "commit": "b95be040c5320b65209a8e9f90a03a54cd1d05f8"
+  },
+  "dataset_contract": {
+    "dataset_id": "XAUUSD_M5_DEV_V1",
+    "bytes": 6285976,
+    "sha256": "a34f2d5469782fccd1e8479ceea5c81b633aa5301b7ed47447049323850de8f5",
+    "candles": 101108,
+    "last_bar_open_time_utc": "2026-09-09T05:25:00Z",
+    "max_information_time_utc": "2026-09-09T05:30:00Z",
+    "decision_rule": "Use only the latest feature row whose decisionTime equals the canonical DEV maxInformationTime.",
+    "post_dev_data_allowed": false,
+    "future_lockbox_data_allowed": false
+  },
+  "final_signal_binding": {
+    "execution_id": "final_signal_v1r1_20260913235306128",
+    "model_sha256": "f4869afd3cfeb681bca356ee08d80a63fb617a841427932a571ff2e2306f7655",
+    "calibrator_sha256": "6d851a2eaa61deaa00bc2bc7899ad40fabc5b8758cd58ed933782709996ac17c",
+    "model_refit": false,
+    "calibrator_refit": false
+  },
+  "risk_input": {
+    "account_equity_quote": 10000,
+    "position_state": "FLAT",
+    "semantic_scope": "isolated deterministic paper risk intent only; not a portfolio simulation"
+  },
+  "pipeline": [
+    "canonical DEV CSV identity verification",
+    "Feature Schema V1 extraction",
+    "frozen Final Signal V1R1 raw inference",
+    "frozen Platt V1 calibration",
+    "Risk Engine V1",
+    "Signal Bridge V1",
+    "Paper Monitor Adapter V1",
+    "local JSONL journal"
+  ],
+  "determinism": {
+    "receipt_time": "exactly decisionTime",
+    "wall_clock_used": false,
+    "same_inputs_same_output": true,
+    "output_path_must_not_preexist": true
+  },
+  "explicit_exclusions": {
+    "future_lockbox_access": false,
+    "post_dev_market_data": false,
+    "labels_or_target_outcomes": false,
+    "economic_evaluation": false,
+    "pnl": false,
+    "paper_fill_simulation": false,
+    "execution_engine": false,
+    "broker_connection": false,
+    "order_submission": false,
+    "network_transport": false,
+    "browser_automation": false,
+    "live_execution": false
+  },
+  "governance_note": "Until the 90-day Future Lockbox has matured and the one-shot Economic Evaluation is completed, no live or post-DEV market input may be connected to this replay path because that would expose reserved lockbox information."
+}
