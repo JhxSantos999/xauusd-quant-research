@@ -18,6 +18,7 @@
     "preflight:execution:v1": "npm run build && node dist/quant-core/cli/run-execution-preflight-v1.js",
     "preflight:economic:v1": "npm run build && node dist/quant-core/cli/run-economic-preflight-v1.js",
     "preflight:economic:v1r1": "npm run build && node dist/quant-core/cli/run-economic-preflight-v1r1.js",
+    "run:economic-lockbox:v1r1": "npm run build && node dist/quant-core/cli/run-economic-lockbox-v1r1.js",
     "run:nested:v1": "npm run build && node dist/quant-core/cli/run-nested-v1.js"
   },
   "devDependencies": {
