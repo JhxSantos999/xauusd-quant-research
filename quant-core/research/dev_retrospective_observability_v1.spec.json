@@ -1,0 +1,69 @@
+{
+  "spec_version": "dev_retrospective_observability_v1",
+  "status": "FROZEN_DEV_RETROSPECTIVE_OBSERVABILITY_ONLY",
+  "mode": "DEV_RETROSPECTIVE_OBSERVABILITY_ONLY",
+  "purpose": "Exercise the frozen Final Signal V1R1 -> Risk V1 -> Signal Bridge V1 -> Paper Monitor V1 -> local JSONL path across a deterministic recent DEV-only sequence without reading outcomes or claiming causal historical prediction.",
+  "dataset_contract": {
+    "dataset_id": "XAUUSD_M5_DEV_V1",
+    "sha256": "a34f2d5469782fccd1e8479ceea5c81b633aa5301b7ed47447049323850de8f5",
+    "byte_length": 6285976,
+    "candles": 101108,
+    "max_information_time": "2026-09-09T05:30:00Z",
+    "post_dev_data_allowed": false,
+    "future_lockbox_data_allowed": false
+  },
+  "scan_contract": {
+    "selection": "LAST_288_OBSERVED_FEATURE_ROWS",
+    "record_count": 288,
+    "ordering": "STRICTLY_INCREASING_DECISION_TIME",
+    "received_at_ms": "EQUALS_DECISION_TIME",
+    "output": "LOCAL_JSONL_ONLY",
+    "output_must_not_preexist": true
+  },
+  "interpretation_guard": {
+    "causal_historical_prediction": false,
+    "predictive_validity_claimed": false,
+    "reason": "The frozen final model/calibrator were fitted using DEV information that is later than some scanned timestamps. The scan is operational observability only and is not a backtest.",
+    "outcomes_read": false,
+    "labels_read": false,
+    "performance_metrics_allowed": false,
+    "threshold_or_model_tuning_allowed": false,
+    "v1_changes_from_scan_output_allowed": false
+  },
+  "final_signal_binding": {
+    "execution_id": "final_signal_v1r1_20260913235306128",
+    "model_sha256": "f4869afd3cfeb681bca356ee08d80a63fb617a841427932a571ff2e2306f7655",
+    "calibrator_sha256": "6d851a2eaa61deaa00bc2bc7899ad40fabc5b8758cd58ed933782709996ac17c",
+    "model_refit": false,
+    "calibrator_refit": false
+  },
+  "risk_telemetry": {
+    "engine": "Risk Engine V1",
+    "account_equity_quote": 10000,
+    "position_state_per_event": "FLAT",
+    "state_mode": "ISOLATED_FLAT_PER_EVENT",
+    "sequential_portfolio_simulation": false
+  },
+  "explicit_exclusions": {
+    "future_lockbox_access": false,
+    "post_dev_market_data": false,
+    "labels_or_target_outcomes": false,
+    "pnl": false,
+    "win_loss": false,
+    "profit_factor": false,
+    "drawdown": false,
+    "paper_fill_simulation": false,
+    "execution_engine": false,
+    "broker_connection": false,
+    "order_submission": false,
+    "network_transport": false,
+    "browser_automation": false,
+    "live_execution": false
+  },
+  "governance": {
+    "created_before_future_lockbox_maturity": true,
+    "created_before_future_lockbox_pnl": true,
+    "future_lockbox_accessed": false,
+    "pnl_evaluated": false
+  }
+}

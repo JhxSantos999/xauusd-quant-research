@@ -1,0 +1,38 @@
+{
+  "implementation_version": "dev_retrospective_observability_v1",
+  "status": "FROZEN_PRE_LOCKBOX_OBSERVABILITY_ONLY",
+  "frozen_upstream": {
+    "base_commit": "73a583f26f339d5339df80cbb406b638fcffca87",
+    "dev_signal_replay_v1_core_sha256": "c862b10b46c78a518bed97c3e06896cb06d0487c2f51d48fa2be799b232ca42a",
+    "signal_bridge_v1_sha256": "5a9be8586679831610fd18e045d5efdf8f947ff12e2b95d3f66c77b95f961626",
+    "paper_monitor_adapter_v1_sha256": "2f00ab549b1087db390bd1a08519e9230e002b6bd04fe623ee8aff537483b935",
+    "final_signal_execution_id": "final_signal_v1r1_20260913235306128",
+    "final_signal_model_sha256": "f4869afd3cfeb681bca356ee08d80a63fb617a841427932a571ff2e2306f7655",
+    "final_signal_calibrator_sha256": "6d851a2eaa61deaa00bc2bc7899ad40fabc5b8758cd58ed933782709996ac17c"
+  },
+  "source_files": {
+    "quant-core/replay/dev-retrospective-observability-v1.ts": {
+      "bytes": 5864,
+      "sha256": "41ef19b4e64fab9dee32861fef2867fc76f180fb6aa7d560bf930a2bfd714da8"
+    },
+    "quant-core/cli/run-dev-retrospective-observability-v1.ts": {
+      "bytes": 9339,
+      "sha256": "ea25eec99410d2e4bc1fe03e3907b62d1ed7fbdac84da44433601656e92060c7"
+    },
+    "quant-core/research/dev_retrospective_observability_v1.spec.json": {
+      "bytes": 2713,
+      "sha256": "9c4fc480b8b1315a77bf524e89b5193addb32b7daf7d3419cb1a9b3192f4e80b"
+    }
+  },
+  "semantics": {
+    "record_count": 288,
+    "selection": "LAST_288_OBSERVED_FEATURE_ROWS",
+    "causal_historical_prediction": false,
+    "outcomes_read": false,
+    "risk_state_mode": "ISOLATED_FLAT_PER_EVENT",
+    "future_lockbox_access": false,
+    "pnl_evaluated": false,
+    "execution_engine_invoked": false,
+    "live_execution": false
+  }
+}

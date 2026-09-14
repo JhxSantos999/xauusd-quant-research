@@ -16,6 +16,7 @@ on:
       - audit/paper-monitor-adapter-v1
       - audit/paper-journal-demo-v1
       - audit/dev-signal-replay-v1
+      - audit/dev-retrospective-observability-v1
   pull_request:
     branches:
       - main
@@ -73,7 +74,11 @@ jobs:
             quant-core/replay/dev-signal-replay-v1.ts \
             quant-core/cli/run-dev-signal-replay-v1.ts \
             quant-core/research/dev_signal_replay_v1.spec.json \
-            quant-core/research/dev_signal_replay_v1.implementation.json; do
+            quant-core/research/dev_signal_replay_v1.implementation.json \
+            quant-core/replay/dev-retrospective-observability-v1.ts \
+            quant-core/cli/run-dev-retrospective-observability-v1.ts \
+            quant-core/research/dev_retrospective_observability_v1.spec.json \
+            quant-core/research/dev_retrospective_observability_v1.implementation.json; do
             printf '%s bytes=' "$f"
             wc -c < "$f" | tr -d ' \n'
             printf ' sha256='
