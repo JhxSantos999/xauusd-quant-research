@@ -61,7 +61,8 @@ jobs:
             quant-core/research/signal_bridge_v1.spec.json \
             quant-core/research/signal_bridge_v1.implementation.json \
             adapters/paper/paper-monitor-adapter-v1.ts \
-            adapters/paper/paper_monitor_adapter_v1.spec.json; do
+            adapters/paper/paper_monitor_adapter_v1.spec.json \
+            adapters/paper/paper_monitor_adapter_v1.implementation.json; do
             printf '%s bytes=' "$f"
             wc -c < "$f" | tr -d ' \n'
             printf ' sha256='
