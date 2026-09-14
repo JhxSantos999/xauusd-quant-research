@@ -57,7 +57,8 @@ jobs:
             quant-core/research/economic_evaluation_v1r2.spec.json \
             quant-core/research/infinox_stp_commission_evidence_v1.json \
             quant-core/bridge/signal-bridge-v1.ts \
-            quant-core/research/signal_bridge_v1.spec.json; do
+            quant-core/research/signal_bridge_v1.spec.json \
+            quant-core/research/signal_bridge_v1.implementation.json; do
             printf '%s bytes=' "$f"
             wc -c < "$f" | tr -d ' \n'
             printf ' sha256='
