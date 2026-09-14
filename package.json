@@ -25,6 +25,7 @@
     "run:economic-lockbox:v1r1": "npm run build && node dist/quant-core/cli/run-economic-lockbox-v1r1.js",
     "run:economic-lockbox:v1r2": "npm run build && node dist/quant-core/cli/run-economic-lockbox-v1r2-production.js",
     "demo:paper-monitor:v1": "npm run build && node dist/quant-core/cli/run-paper-journal-demo-v1.js",
+    "replay:dev-signal:v1": "npm run build && node dist/quant-core/cli/run-dev-signal-replay-v1.js",
     "run:nested:v1": "npm run build && node dist/quant-core/cli/run-nested-v1.js"
   },
   "devDependencies": {
