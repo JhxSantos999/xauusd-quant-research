@@ -41,3 +41,22 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Report V1R2 source identities
+        shell: bash
+        run: |
+          for f in \
+            quant-core/execution/execution-engine-v1r2.ts \
+            quant-core/economic/economic-lockbox-evaluator-v1r2.ts \
+            quant-core/lockbox/one-shot-registry-v1r2.ts \
+            quant-core/cli/run-economic-preflight-v1r2.ts \
+            quant-core/cli/run-economic-lockbox-v1r2.ts \
+            quant-core/cli/run-economic-lockbox-v1r2-production.ts \
+            quant-core/research/economic-evaluation-v1r2-contracts.ts \
+            quant-core/research/economic_evaluation_v1r2.spec.json \
+            quant-core/research/infinox_stp_commission_evidence_v1.json; do
+            printf '%s bytes=' "$f"
+            wc -c < "$f" | tr -d ' \n'
+            printf ' sha256='
+            sha256sum "$f" | awk '{print $1}'
+          done
